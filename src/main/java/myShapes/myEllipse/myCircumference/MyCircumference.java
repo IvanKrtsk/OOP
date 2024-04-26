@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import myShapes.myEllipse.MyEllipse;
 import myPoint.MyPoint;
+import myShapes.myStrategy.myClasses.MyCircumferenceDrawStrategy;
 
 import java.util.ArrayList;
 
@@ -15,19 +16,14 @@ public class MyCircumference extends MyEllipse {
         setParameters();
     }
     protected void setParameters(){
-        this.centre = this.cordinates.get(0);
+        this.centre.x = Math.abs((this.cordinates.get(0).x + this.cordinates.get(1).x) / 2);
+        this.centre.y = Math.abs((this.cordinates.get(0).y + this.cordinates.get(1).y) / 2);
         this.radius = extractRadius();
+        drawStrategy = new MyCircumferenceDrawStrategy();
     }
-
-    private double extractRadius(){
-        return(MyPoint.getDistance(this.centre, this.cordinates.get(1)));
-    }
+    private double extractRadius(){return(Math.abs(this.centre.x - cordinates.get(0).x));}
     @Override
     public javafx.scene.shape.Shape draw(){
-        Circle circle = new Circle();
-        circle.setCenterX(this.centre.x);
-        circle.setCenterY(this.centre.y);
-        circle.setRadius(this.radius);
-        return(circle);
+        return(drawStrategy.draw(this.cordinates, this.color));
     }
 }

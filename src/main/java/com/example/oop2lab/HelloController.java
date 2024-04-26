@@ -1,96 +1,86 @@
 package com.example.oop2lab;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
 import myPoint.MyPoint;
-import myShapes.myEllipse.MyEllipse;
-import myShapes.myEllipse.myCircumference.MyCircumference;
-import myShapes.myLine.MyLine;
-import myShapes.myPolygon.myQuadrilateral.myRectangle.MyRectangle;
-import myShapes.myPolygon.myQuadrilateral.myRectangle.mySquare.MySquare;
-import myShapes.myPolygon.myTriangle.MyTriangle;
+import myShapes.MyShape;
+import myShapes.myAbstractFactory.myClasses.*;
+import myShapes.myAbstractFactory.myInterfaces.ShapeFabric;
 
 public class HelloController {
 
     @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
-
-    @FXML
     private Pane drawPane;
-
     @FXML
     private RadioButton lineButton;
-
     @FXML
     private ToggleGroup radioGroup;
-
     @FXML
     private RadioButton rectangularButton;
-
     @FXML
     private RadioButton roundButton;
-
     @FXML
     private RadioButton squareButton;
-
     @FXML
     private RadioButton triangleButton;
+    @FXML
+    private RadioButton ellipseButton;
+
+    private double startX, startY, endX, endY;
+    private MyLineAbstractFactory lineFactory = new MyLineAbstractFactory();
+    private MyEllipseAbstractFactory ellipseFactory = new MyEllipseAbstractFactory();
+    private MyCircumferenceAbstractFactory circumferenceFactory = new MyCircumferenceAbstractFactory();
+    private MyRectangleAbstractFactory rectangleFactory = new MyRectangleAbstractFactory();
+    private MySquareAbstractFactory squareFactory = new MySquareAbstractFactory();
+    private MyTriangleAbstractFactory triangleFactory = new MyTriangleAbstractFactory();
+    private ShapeFabric fabricInterface;
+    private RadioButton selectedRadioButton;
 
     @FXML
     void initialize() {
-        ArrayList<MyPoint> cordinates = new ArrayList<>();
-        MyPoint point = new MyPoint(30, 30);
-        MyPoint point1 = new MyPoint(80, 50);
-        MyPoint point2 = new MyPoint(200, 130);
-        cordinates.add(point);
-        cordinates.add(point1);
+        List<MyShape> shapeList = new LinkedList<>();
+        MyPoint point = new MyPoint();
+        MyPoint point1 = new MyPoint();
 
-        MyRectangle myRect = new MyRectangle(MyPoint.getPointArr(point, point1), Color.BLUE);
-        Rectangle rect = (Rectangle)myRect.draw();
+        Map<String, Object> shapeMap = new HashMap<>();
+        shapeMap.put("Линия", lineFactory);
+        shapeMap.put("Квадрат", squareFactory);
+        shapeMap.put("Прямоугольник", rectangleFactory);
+        shapeMap.put("Круг", circumferenceFactory);
+        shapeMap.put("Треугольник", triangleFactory);
+        shapeMap.put("Эллипс", ellipseFactory);
 
-        point.setCordinates(90, 30);
-        point1.setCordinates(130, 70);
-        MySquare mySq = new MySquare(MyPoint.getPointArr(point, point1), Color.RED);
-        Rectangle square = (Rectangle)mySq.draw();
+        drawPane.setOnMousePressed(event -> {
+            startX = event.getX();
+            startY = event.getY();
+        });
 
-        point.setCordinates(140, 30);
-        point1.setCordinates(190, 55);
-        MyLine myLi = new MyLine(MyPoint.getPointArr(point, point1), Color.BLACK);
-        Line line = (Line)myLi.draw();
+        drawPane.setOnMouseReleased(event -> {
+            endX = event.getX();
+            if(endX < 0)
+                endX = 0;
+            endY = event.getY();
+            if(selectedRadioButton != null) {
+                point.setCordinates(startX, startY);
+                point1.setCordinates(endX, endY);
+                fabricInterface = (ShapeFabric) shapeMap.get(selectedRadioButton.getText());
+                MyShape shape = fabricInterface.createShape(MyPoint.getPointArr(point, point1), Color.color(Math.random(), Math.random(), Math.random()));
+                shapeList.add(shape);
+                drawPane.getChildren().add(shape.doDrawing());
+            }
+        });
 
-        point.setCordinates(200, 100);
-        point1.setCordinates(150, 100);
-        point2.setCordinates(200, 130);
-        MyEllipse myEl = new MyEllipse(MyPoint.getPointArr(point, point1, point2), Color.PURPLE);
-        Ellipse ellipse = (Ellipse)myEl.draw();
-
-        point.setCordinates(400, 100);
-        point1.setCordinates(400, 150);
-        MyCircumference myCircle = new MyCircumference(MyPoint.getPointArr(point, point1, point2), Color.GREEN);
-        Circle circle = (Circle)myCircle.draw();
-
-
-        point.setCordinates(410, 200);
-        point1.setCordinates(480, 200);
-        point2.setCordinates(445, 300);
-        MyTriangle myTriangle = new MyTriangle(MyPoint.getPointArr(point, point1, point2), Color.YELLOW);
-        Polygon triangle = (Polygon)myTriangle.draw();
-
-        drawPane.getChildren().add(rect);
-        drawPane.getChildren().add(square);
-        drawPane.getChildren().add(line);
-        drawPane.getChildren().add(ellipse);
-        drawPane.getChildren().add(circle);
-        drawPane.getChildren().add(triangle);
+        radioGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null)
+                selectedRadioButton = (RadioButton) newValue;
+        });
     }
 }

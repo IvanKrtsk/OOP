@@ -11,7 +11,9 @@ public class MyPoint {
         this.x = x;
         this.y = y;
     }
+    public MyPoint(){
 
+    }
     public static double getDistance(MyPoint p1, MyPoint p2){
         return(Math.sqrt((Math.pow((p2.x - p1.x), 2)) + Math.pow((p2.y - p1.y), 2)));
     }

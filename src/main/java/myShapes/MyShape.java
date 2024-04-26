@@ -2,9 +2,12 @@ package myShapes;
 
 import javafx.scene.paint.Color;
 import myPoint.MyPoint;
+import myShapes.myStrategy.myInterfaces.DrawStrategy;
+
 import java.util.ArrayList;
 
 public abstract class MyShape {
+    public DrawStrategy drawStrategy;
     public ArrayList<MyPoint> cordinates;
     public Color color;
     protected MyShape(ArrayList<MyPoint> cordinates, Color color){
@@ -17,5 +20,7 @@ public abstract class MyShape {
         }
         this.color = color;
     }
-    protected abstract javafx.scene.shape.Shape draw();
+    public javafx.scene.shape.Shape doDrawing(){
+        return(drawStrategy.draw(this.cordinates, this.color));
+    }
 }

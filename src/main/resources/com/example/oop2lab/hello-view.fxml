@@ -6,7 +6,6 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.oop2lab.HelloController">
     <children>
-      <Pane fx:id="drawPane" layoutX="129.0" prefHeight="400.0" prefWidth="472.0" />
         <RadioButton fx:id="lineButton" layoutX="14.0" layoutY="66.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="64.0" text="Линия">
             <toggleGroup>
                 <ToggleGroup fx:id="radioGroup" />
@@ -16,6 +15,7 @@
         <RadioButton fx:id="rectangularButton" layoutX="14.0" layoutY="159.0" mnemonicParsing="false" text="Прямоугольник" toggleGroup="$radioGroup" />
         <RadioButton fx:id="roundButton" layoutX="14.0" layoutY="209.0" mnemonicParsing="false" text="Круг" toggleGroup="$radioGroup" />
         <RadioButton fx:id="triangleButton" layoutX="14.0" layoutY="261.0" mnemonicParsing="false" text="Треугольник" toggleGroup="$radioGroup" />
-        <RadioButton layoutX="14.0" layoutY="319.0" mnemonicParsing="false" text="Button" toggleGroup="$radioGroup" />
+        <RadioButton fx:id="ellipseButton" layoutX="14.0" layoutY="319.0" mnemonicParsing="false" text="Эллипс" toggleGroup="$radioGroup" />
+      <Pane fx:id="drawPane" layoutX="131.0" prefHeight="400.0" prefWidth="470.0" />
     </children>
 </Pane>
