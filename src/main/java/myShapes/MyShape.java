@@ -1,8 +1,9 @@
 package myShapes;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 import myPoint.MyPoint;
-import myShapes.myStrategy.myInterfaces.DrawStrategy;
+import myShapes.myDrawStrategy.myInterfaces.DrawStrategy;
 
 import java.util.ArrayList;
 
@@ -10,6 +11,8 @@ public abstract class MyShape {
     public DrawStrategy drawStrategy;
     public ArrayList<MyPoint> cordinates;
     public Color color;
+    public javafx.scene.shape.Shape javaShape;
+    protected MyPoint centre = new MyPoint();
     protected MyShape(ArrayList<MyPoint> cordinates, Color color){
         setParameters(cordinates, color);
     }
@@ -20,7 +23,9 @@ public abstract class MyShape {
         }
         this.color = color;
     }
-    public javafx.scene.shape.Shape doDrawing(){
-        return(drawStrategy.draw(this.cordinates, this.color));
+    public void doDrawing(){
+        drawStrategy.draw(this);
     }
+    public MyPoint getCentre(){return(this.centre);}
+//    public void setCentre(double newX, double newY){this.centre.x = newX; this.centre.y = newY;}
 }

@@ -5,7 +5,6 @@ import myPoint.MyPoint;
 import myShapes.MyShape;
 import myShapes.myAbstractFactory.myInterfaces.ShapeFabric;
 import myShapes.myEllipse.MyEllipse;
-import myShapes.myLine.MyLine;
 
 import java.util.ArrayList;
 

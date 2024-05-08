@@ -3,7 +3,7 @@ package myShapes.myPolygon.myQuadrilateral.myRectangle;
 import javafx.scene.paint.Color;
 import myPoint.MyPoint;
 import myShapes.myPolygon.myQuadrilateral.MyQuadrilateral;
-import myShapes.myStrategy.myClasses.MyRectangleDrawStrategy;
+import myShapes.myDrawStrategy.myClasses.MyRectangleDrawStrategy;
 
 import java.util.ArrayList;
 
