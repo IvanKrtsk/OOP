@@ -7,10 +7,11 @@ import myShapes.myDrawStrategy.myClasses.MyRectangleDrawStrategy;
 
 import java.util.ArrayList;
 
-public class MyRectangle extends MyQuadrilateral {
+public class MyRectangle extends MyQuadrilateral{
 
     public MyRectangle(ArrayList<MyPoint> cordinates, Color color){
         super(cordinates, color);
         this.drawStrategy = new MyRectangleDrawStrategy();
+        this.className = "Прямоугольник";
     }
 }

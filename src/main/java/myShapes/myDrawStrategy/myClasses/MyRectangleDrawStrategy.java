@@ -6,17 +6,17 @@ import myShapes.myPolygon.myQuadrilateral.myRectangle.MyRectangle;
 import myShapes.myPolygon.myQuadrilateral.myRectangle.mySquare.MySquare;
 import myShapes.myDrawStrategy.myInterfaces.DrawStrategy;
 
-public class MyRectangleDrawStrategy implements DrawStrategy {
+public class MyRectangleDrawStrategy implements DrawStrategy{
     public void draw(MyShape shape){
         Rectangle rectangle = (Rectangle)shape.javaShape;
         MyRectangle myRectangle = (MyRectangle)shape;
         rectangle.setX(myRectangle.cordinates.get(0).x);
         rectangle.setY(myRectangle.cordinates.get(0).y);
-        rectangle.setWidth(myRectangle.width);
+        rectangle.setWidth(Math.abs(myRectangle.getWidth()));
         if (shape instanceof MySquare)
-            rectangle.setHeight(myRectangle.width);
+            rectangle.setHeight(Math.abs(myRectangle.getWidth()));
         else
-            rectangle.setHeight(myRectangle.heigth);
+            rectangle.setHeight(Math.abs(myRectangle.getHeight()));
         rectangle.setFill(myRectangle.color);
     }
 }

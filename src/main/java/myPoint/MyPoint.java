@@ -1,11 +1,12 @@
 package myPoint;
 
-import javafx.scene.effect.Light;
+import com.google.gson.annotations.Expose;
 
-import java.lang.reflect.Array;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MyPoint {
+public class MyPoint implements Serializable {
+    @Expose
     public double x, y;
     public MyPoint(double x, double y){
         this.x = x;

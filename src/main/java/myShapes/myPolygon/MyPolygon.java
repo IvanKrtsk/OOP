@@ -6,14 +6,9 @@ import myPoint.MyPoint;
 
 import java.util.ArrayList;
 
-public abstract class MyPolygon extends MyShape {
-    public int vertexCount;
+public abstract class MyPolygon extends MyShape{
     protected MyPolygon(ArrayList<MyPoint> cordinates, Color color){
         super(cordinates, color);
-        setVertexCount(cordinates.size());
         this.javaShape = new javafx.scene.shape.Polygon();
-    }
-    private void setVertexCount(int vertexCount){
-        this.vertexCount = vertexCount;
     }
 }
