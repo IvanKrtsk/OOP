@@ -1,8 +1,8 @@
-package myShapes.myDrawStrategy.myClasses;
+package myPatterns.myDrawStrategy.myClasses;
 
 import javafx.scene.shape.Polygon;
 import myShapes.MyShape;
-import myShapes.myDrawStrategy.myInterfaces.DrawStrategy;
+import myPatterns.myDrawStrategy.myInterfaces.DrawStrategy;
 import myShapes.myPolygon.myTriangle.MyTriangle;
 
 public class MyTriangleDrawStrategy implements DrawStrategy{
@@ -11,6 +11,8 @@ public class MyTriangleDrawStrategy implements DrawStrategy{
         MyTriangle myTriangle = (MyTriangle)shape;
         triangle.getPoints().clear();
         triangle.getPoints().addAll(myTriangle.trianglePoints);
-        triangle.setFill(shape.color);
+        triangle.setFill(shape.fillColor);
+        triangle.setStroke(shape.strokeColor);
+        triangle.setStrokeWidth(shape.strokeWidth);
     }
 }

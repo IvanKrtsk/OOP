@@ -3,13 +3,13 @@ package myShapes.myLine;
 import javafx.scene.paint.Color;
 import myPoint.MyPoint;
 import myShapes.MyShape;
-import myShapes.myDrawStrategy.myClasses.MyLineDrawStrategy;
+import myPatterns.myDrawStrategy.myClasses.MyLineDrawStrategy;
 
 import java.util.ArrayList;
 
 public class MyLine extends MyShape {
-    public MyLine(ArrayList<MyPoint> cordinates, Color color){
-        super(cordinates, color);
+    public MyLine(ArrayList<MyPoint> cordinates, Color fillColor, Color strokeColor, double strokeWidth){
+        super(cordinates, fillColor, strokeColor, strokeWidth);
         this.drawStrategy = new MyLineDrawStrategy();
         this.javaShape = new javafx.scene.shape.Line();
         this.className = "Линия";

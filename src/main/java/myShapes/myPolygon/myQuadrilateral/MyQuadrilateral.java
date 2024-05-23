@@ -7,8 +7,8 @@ import myPoint.MyPoint;
 import java.util.ArrayList;
 
 public abstract class MyQuadrilateral extends MyPolygon{
-    protected MyQuadrilateral(ArrayList<MyPoint> cordinates, Color color){
-        super(cordinates, color);
+    protected MyQuadrilateral(ArrayList<MyPoint> cordinates, Color fillColor, Color strokeColor, double strokeWidth){
+        super(cordinates, fillColor, strokeColor, strokeWidth);
         fixCordinates();
         this.javaShape = new javafx.scene.shape.Rectangle();
     }
@@ -18,7 +18,7 @@ public abstract class MyQuadrilateral extends MyPolygon{
         startY = Math.min(this.cordinates.get(0).y, this.cordinates.get(1).y);
         this.cordinates.clear();
         this.cordinates.add(new MyPoint(startX, startY));
-        this.cordinates.add(new MyPoint(startX + Math.abs(getWidth()), startY - Math.abs(getHeight())));
+        this.cordinates.add(new MyPoint(startX + Math.abs(getWidth()), startY + Math.abs(getHeight())));
     }
     public double getWidth() {return(super.getWidth());}
     public double getHeight() {return(super.getHeight());}

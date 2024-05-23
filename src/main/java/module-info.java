@@ -8,4 +8,5 @@ module com.example.oop2lab {
     exports com.example.oop2lab;
     exports myShapes to com.google.gson;
     exports myPoint to com.google.gson;
+    exports mySerializator to com.google.gson;
 }

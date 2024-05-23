@@ -8,23 +8,20 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
+import myPatterns.myAbstractFactory.myClasses.*;
 import myPoint.MyPoint;
 import myShapes.MyShape;
-import myShapes.ShapeData;
-import myShapes.myAbstractFactory.myClasses.*;
-import myShapes.myAbstractFactory.myInterfaces.ShapeFabric;
+import mySerializator.SerializeShapeData;
+import myPatterns.myAbstractFactory.myInterfaces.ShapeFabric;
 import com.google.gson.Gson;
 
 
-public class HelloController {
+public class OOPController {
     @FXML
     private Pane mainPane;
     @FXML
@@ -55,6 +52,10 @@ public class HelloController {
     private ToggleGroup serGroup;
     @FXML
     private ColorPicker colorMenu;
+    @FXML
+    private ColorPicker strokeColorMenu;
+    @FXML
+    private Slider strokeSlider;
 
 
     private double startX, startY, endX, endY;
@@ -70,20 +71,77 @@ public class HelloController {
     public Shape javaSelectedShape;
     public MyShape mySelectedShape;
     private List<MyShape> shapeList = new LinkedList<>();
-
+    private List<SerializeShapeData> serializeShapeList = new LinkedList<>();
+    private void convertShapesToSerialize(){
+        serializeShapeList.clear();
+        for (MyShape shapeToSerialize: shapeList) {
+            serializeShapeList.add(new SerializeShapeData(shapeToSerialize));
+        }
+    }
+    public void doBinDeserialize(Map<String, Object> shapeMap) {
+        List<SerializeShapeData> deserializeList = new LinkedList<>();
+        try {
+            FileInputStream fileIn = new FileInputStream("shapes.dat");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            deserializeList = (List<SerializeShapeData>) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Class not found");
+            c.printStackTrace();
+        }
+        for (SerializeShapeData shape: deserializeList) {
+            fabricInterface = (ShapeFabric) shapeMap.get(shape.className);
+            MyShape myShape = fabricInterface.createShape(shape.cordinates, Color.web(shape.strFillColor), Color.web(shape.strStrokeColor), strokeSlider.getValue());
+            myShape.doDrawing();
+            shapeList.add(myShape);
+            drawPane.getChildren().add(myShape.javaShape);
+        }
+    }
+    public void doJsonDeserialize(Map<String, Object> shapeMap){
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+        try (JsonReader reader = new JsonReader(new FileReader("shapes.json"))) {
+            Type shapeListType = new TypeToken<ArrayList<SerializeShapeData>>(){}.getType();
+            ArrayList<SerializeShapeData> tmpShapeList = gson.fromJson(reader, shapeListType);
+            for (SerializeShapeData shapeData: tmpShapeList) {
+                fabricInterface = (ShapeFabric) shapeMap.get(shapeData.className);
+                MyShape myShape = fabricInterface.createShape(shapeData.cordinates, Color.web(shapeData.strFillColor), Color.web(shapeData.strStrokeColor), strokeSlider.getValue());
+                myShape.doDrawing();
+                shapeList.add(myShape);
+                drawPane.getChildren().add(myShape.javaShape);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void setNewCordinates(){
         double deltaX = endX - startX, deltaY = endY - startY;
         mySelectedShape.updateCordinates(MyPoint.getPointArr(new MyPoint(mySelectedShape.cordinates.get(0).x + deltaX, mySelectedShape.cordinates.get(0).y + deltaY), new MyPoint(mySelectedShape.cordinates.get(1).x + deltaX, mySelectedShape.cordinates.get(1).y + deltaY)));
     }
-    private MyShape checkShape(){
+    private void selectShape(){
+        clearJavaSelectedShape();
         for (int i = 0; i < shapeList.size(); i++) {
             javaSelectedShape = shapeList.get(i).javaShape;
             if (javaSelectedShape.contains(startX - javaSelectedShape.getLayoutX(), startY - javaSelectedShape.getLayoutY())) {
                 isActivated = true;
-                return(shapeList.get(i));
-            }
+                mySelectedShape = shapeList.get(i);
+                javaSelectedShape.getStrokeDashArray().addAll(25d, 10d);
+                colorMenu.setValue(mySelectedShape.fillColor);
+                strokeColorMenu.setValue(mySelectedShape.strokeColor);
+                strokeSlider.setValue(mySelectedShape.strokeWidth);
+            }else
+                clearJavaSelectedShape();
         }
-         return(null);
+    }
+    private void clearJavaSelectedShape(){
+        if(javaSelectedShape != null){
+            javaSelectedShape.getStrokeDashArray().clear();
+            javaSelectedShape = null;
+        }
     }
 
     @FXML
@@ -99,10 +157,14 @@ public class HelloController {
         shapeMap.put("Треугольник", triangleFactory);
         shapeMap.put("Эллипс", ellipseFactory);
 
+        colorMenu.setValue(Color.RED);
+        strokeColorMenu.setValue(Color.BLACK);
+        strokeSlider.setValue(5);
+
         drawPane.setOnMousePressed(event -> {
             startX = event.getX();
             startY = event.getY();
-            mySelectedShape = checkShape();
+            selectShape();
         });
 
         drawPane.setOnMouseReleased(event -> {
@@ -117,7 +179,7 @@ public class HelloController {
                     point.setCordinates(startX, startY);
                     point1.setCordinates(endX, endY);
                     fabricInterface = (ShapeFabric) shapeMap.get(selectedRadioButton.getText());
-                    MyShape shape = fabricInterface.createShape(MyPoint.getPointArr(point, point1), Color.color(Math.random(), Math.random(), Math.random()));
+                    MyShape shape = fabricInterface.createShape(MyPoint.getPointArr(point, point1), colorMenu.getValue(), strokeColorMenu.getValue(), strokeSlider.getValue());
                     shape.doDrawing();
                     shapeList.add(shape);
 
@@ -152,6 +214,8 @@ public class HelloController {
                         isActivated = false;
                     }
                     break;
+                case ESCAPE:
+                    clearJavaSelectedShape();
             }
         });
 
@@ -162,22 +226,51 @@ public class HelloController {
             }
         });
 
+        colorMenu.setOnAction(event -> {
+            if(isActivated && mySelectedShape != null){
+                mySelectedShape.updateColor(colorMenu.getValue());
+            }
+        });
+
+        strokeColorMenu.setOnAction(event -> {
+            if(isActivated && mySelectedShape != null){
+                mySelectedShape.updateStrokeColor(strokeColorMenu.getValue());
+            }
+        });
+
+        strokeSlider.valueChangingProperty().addListener((obs, wasChanging, isNowChanging) ->{
+            if (!isNowChanging) {
+                if(isActivated && mySelectedShape != null){
+                    mySelectedShape.updateStrokeWidth(strokeSlider.getValue());
+                }
+            }
+        });
+
         serializeButton.setOnMouseClicked(mouseEvent -> {
             if(serSelectedRadioButton != null) {
                 if(serSelectedRadioButton.getText().contains("Bin")) {
-                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("shapes.dat"))) {
-                        for (MyShape shape : shapeList) {
-                            oos.writeObject(shape);
-                        }
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
+                    convertShapesToSerialize();
+                    FileOutputStream fileOut = null;
+                    try {
+                        fileOut = new FileOutputStream("shapes.dat");
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                        out.writeObject(serializeShapeList);
+                        out.close();
+                        fileOut.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                 }else {
                     Gson gson = new GsonBuilder()
                             .excludeFieldsWithoutExposeAnnotation()
                             .create();
                     try (FileWriter writer = new FileWriter("shapes.json")) {
-                            gson.toJson(shapeList, writer);
+                        convertShapesToSerialize();
+                        gson.toJson(serializeShapeList, writer);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -188,41 +281,9 @@ public class HelloController {
         deserializeButton.setOnMouseClicked(mouseEvent -> {
             if(serSelectedRadioButton != null) {
                 if (serSelectedRadioButton.getText().contains("Bin")) {
-                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("shapes.dat"))) {
-                        while (true) {
-                            try {
-                                MyShape shape = (MyShape) ois.readObject();
-                                MyShape myShape;
-                                fabricInterface = (ShapeFabric) shapeMap.get(shape.className);
-                                myShape = fabricInterface.createShape(shape.cordinates, shape.color);
-                                myShape.doDrawing();
-                                shapeList.add(myShape);
-                                drawPane.getChildren().add(myShape.javaShape);
-                            } catch (EOFException e) {
-                                break;
-                            }
-                        }
-                    } catch (IOException | ClassNotFoundException ex) {
-                        System.err.println("Ошибка при десериализации: " + ex.getMessage());
-                    }
+                    doBinDeserialize(shapeMap);
                 }else{
-                    Gson gson = new GsonBuilder()
-                            .excludeFieldsWithoutExposeAnnotation()
-                            .create();
-                    try (JsonReader reader = new JsonReader(new FileReader("shapes.json"))) {
-                        Type shapeListType = new TypeToken<ArrayList<ShapeData>>(){}.getType();
-                        ArrayList<ShapeData> tmpShapeList = gson.fromJson(reader, shapeListType);
-                        for (ShapeData shapeData: tmpShapeList) {
-                            fabricInterface = (ShapeFabric) shapeMap.get(shapeData.className);
-                            MyShape myShape = fabricInterface.createShape(shapeData.cordinates, Color.web(shapeData.strColor));
-                            myShape.doDrawing();
-                            shapeList.add(myShape);
-                            drawPane.getChildren().add(myShape.javaShape);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
+                    doJsonDeserialize(shapeMap);
                 }
             }
         });

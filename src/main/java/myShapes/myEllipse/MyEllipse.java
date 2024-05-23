@@ -3,15 +3,15 @@ package myShapes.myEllipse;
 import javafx.scene.paint.Color;
 import myShapes.MyShape;
 import myPoint.MyPoint;
-import myShapes.myDrawStrategy.myClasses.MyEllipseDrawStrategy;
+import myPatterns.myDrawStrategy.myClasses.MyEllipseDrawStrategy;
 
 import java.util.ArrayList;
 
 public class MyEllipse extends MyShape {
     private double radiusX, radiusY;
     protected MyPoint centre = new MyPoint();
-    public MyEllipse(ArrayList<MyPoint> cordinates, Color color){
-        super(cordinates, color);
+    public MyEllipse(ArrayList<MyPoint> cordinates, Color fillColor, Color strokeColor, double strokeWidth){
+        super(cordinates, fillColor, strokeColor, strokeWidth);
         setParameters();
     }
     protected void setParameters(){

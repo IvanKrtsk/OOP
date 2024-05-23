@@ -1,4 +1,4 @@
-package myShapes.myDrawStrategy.myInterfaces;
+package myPatterns.myDrawStrategy.myInterfaces;
 
 import myShapes.MyShape;
 

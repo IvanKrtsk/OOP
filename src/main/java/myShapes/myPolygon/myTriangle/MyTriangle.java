@@ -3,14 +3,14 @@ package myShapes.myPolygon.myTriangle;
 import javafx.scene.paint.Color;
 import myPoint.MyPoint;
 import myShapes.myPolygon.MyPolygon;
-import myShapes.myDrawStrategy.myClasses.MyTriangleDrawStrategy;
+import myPatterns.myDrawStrategy.myClasses.MyTriangleDrawStrategy;
 
 import java.util.ArrayList;
 
 public class MyTriangle extends MyPolygon{
     public Double[] trianglePoints;
-    public MyTriangle(ArrayList<MyPoint> cordinates, Color color){
-        super(cordinates, color);
+    public MyTriangle(ArrayList<MyPoint> cordinates, Color fillColor, Color strokeColor, double strokeWidth){
+        super(cordinates, fillColor, strokeColor, strokeWidth);
         this.drawStrategy = new MyTriangleDrawStrategy();
         this.trianglePoints = new Double[6];
         fillTrinaglePoints();
